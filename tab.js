@@ -52,14 +52,17 @@ function speakText(text) {
 
 // --- OpenRouter GPT + Unsplash ---
 async function getOpenRouterResponse(promptText) {
-  const token = "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"; // ← замените своим ключом
+  const token = "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"; // вставьте свой API-ключ (только ASCII символы)
   const url = "https://openrouter.ai/api/v1/chat/completions";
   const body = {
     model: "gpt-4o-mini",
     temperature: 0.3,
     max_tokens: 1000,
     messages: [
-      { role: "system", content: "Отвечай кратко, без смайликов. В конце ответа укажи KEYWORDS: English words for image search, но не показывай их пользователю." },
+      {
+        role: "system",
+        content: "Отвечай кратко, без смайликов. В конце ответа укажи KEYWORDS: English words for image search, но не показывай их пользователю."
+      },
       { role: "user", content: promptText }
     ]
   };
@@ -67,8 +70,8 @@ async function getOpenRouterResponse(promptText) {
     const res = await fetch(url, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
+        "Content-Type": "application/json; charset=utf-8",
+        "Authorization": `Bearer ${token.trim()}`
       },
       body: JSON.stringify(body)
     });
@@ -85,18 +88,26 @@ async function getOpenRouterResponse(promptText) {
     showTextWithAnimation(answer);
 
     try {
-      const u = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(keywords)}&client_id=5cNGGhySiIPu1aKITVFVoPBawvJyQSaY9RVAuu2wh4g`);
+      const u = await fetch(
+        `https://api.unsplash.com/photos/random?query=${encodeURIComponent(keywords)}&client_id=5cNGGhySiIPu1aKITVFVoPBawvJyQSaY9RVAuu2wh4g`
+      );
       const imgData = await u.json();
-      const imgUrl = imgData?.urls?.regular || "https://via.placeholder.com/600x400?text=Картинка+не+найдена";
+      const imgUrl =
+        imgData?.urls?.regular ||
+        "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'><rect width='100%' height='100%' fill='grey'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='40' fill='white'>Картинка не найдена</text></svg>";
       showImageWithAnimation(imgUrl);
     } catch (e) {
-      showImageWithAnimation("https://via.placeholder.com/600x400?text=Ошибка");
+      showImageWithAnimation(
+        "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'><rect width='100%' height='100%' fill='grey'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='40' fill='white'>Ошибка</text></svg>"
+      );
     }
 
   } catch (e) {
     console.error(e);
     showTextWithAnimation("Ошибка сети");
-    showImageWithAnimation("https://via.placeholder.com/600x400?text=Ошибка");
+    showImageWithAnimation(
+      "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'><rect width='100%' height='100%' fill='grey'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='40' fill='white'>Ошибка</text></svg>"
+    );
   }
 }
 
