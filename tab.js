@@ -52,7 +52,7 @@ function speakText(text) {
 
 // --- OpenRouter GPT + Unsplash ---
 async function getOpenRouterResponse(promptText) {
-  const token = "ВАШ_API_KEY"; // ← замените своим ключом
+  const token = "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"; // ← замените своим ключом
   const url = "https://openrouter.ai/api/v1/chat/completions";
   const body = {
     model: "gpt-4o-mini",
@@ -85,7 +85,7 @@ async function getOpenRouterResponse(promptText) {
     showTextWithAnimation(answer);
 
     try {
-      const u = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(keywords)}&client_id=ВАШ_UNSPLASH_KEY`);
+      const u = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(keywords)}&client_id=5cNGGhySiIPu1aKITVFVoPBawvJyQSaY9RVAuu2wh4g`);
       const imgData = await u.json();
       const imgUrl = imgData?.urls?.regular || "https://via.placeholder.com/600x400?text=Картинка+не+найдена";
       showImageWithAnimation(imgUrl);
